@@ -1,0 +1,5 @@
+There is the new and improved Spy Bot, the main improvisation is that in this one if there is a bull market, your funds will continue to rise as you will be spending just as much and your % cap is higher, while also having a min cap so you don't lose too much.
+
+There are some problems though, currently the bot is not working (my math must be wrong in some manner). The return is also lower than just investing in SPY itself, so the whole point of this bot is kind of thrown off. The original bot also was doing better than this (for now), mainly because if a bear market happens the bot will just keep pumping and losing 10% as there is only a 7 day pause after the loss. I do think that the code is also inefficent and could be improved. 
+
+Overall many improvements to be made, but when the bot is finished hopefully we are looking at around a 100% roi over 5 years so we can 2x the stock itself so there would be an actual reason to invest with the bot. 
