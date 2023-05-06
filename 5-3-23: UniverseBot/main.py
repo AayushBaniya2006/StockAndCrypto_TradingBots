@@ -8,47 +8,38 @@ class CalculatingTanFrog(QCAlgorithm):
         self.SetStartDate(2019, 1, 1) # Set Start Date
         self.SetEndDate(2021, 1, 1) 
         self.SetCash(100000)  # Set Strategy Cash
-        self.rebalaneTime = datetime.min
+        self.rebalanceTime = datetime.min
         self.activeStocks = set()
-
 
         self.AddUniverse(self.CoarseFilter, self.FineFilter)
         self.UniverseSettings.Resolution = Resolution.Hour
 
         self.portfolioTargets = []
 
-   
-    
     def CoarseFilter(self, coarse):
-        if self.Time <= self.rebalaneTime:
+        if self.Time <= self.rebalanceTime:
             return self.Universe.Unchanged
-        self.rebalance = self.Time + timedelta(30)
-        sortedByDollarVolume = sorted(coarse,key=lambda x: x.DollarVolume, reverse=True)
-
-        return [x.Symbol for x in sortedByDollarVolume if x.Price > 10 and x.HasFundamentalData] [:200]
+        filtered = [x for x in coarse if x.Price > 10 and x.HasFundamentalData]
+        sortedByDollarVolume = sorted(filtered, key=lambda x: x.DollarVolume, reverse=True)
+        return [x.Symbol for x in sortedByDollarVolume][:200]
         
-
-
     def FineFilter(self, fine): 
         sortedByPE = sorted(fine, key=lambda x: x.MarketCap) 
-        return [x.Symbol for x in sortedByPE if x.MarketCap>0][:10]
+        return [x.Symbol for x in sortedByPE if x.MarketCap > 0][:10]
 
     def OnSecuritiesChanged(self, changes):
         for x in changes.RemovedSecurities:
-            self.Liquidate(x.Symbol)
-            self.activeStocks.remove(x.Symbol)
+            if x.Symbol in self.activeStocks:
+                self.Liquidate(x.Symbol)
+                self.activeStocks.remove(x.Symbol)
         for x in changes.AddedSecurities:
             self.activeStocks.add(x.Symbol)
         
         self.portfolioTargets = [PortfolioTarget(symbol, 1/len(self.activeStocks)) for symbol in self.activeStocks]
         
     def OnData(self, data: Slice):
-        
-        if self.portfolioTargets == []:
-            return 
         for symbol in self.activeStocks:
             if symbol not in data:
                 return 
         self.SetHoldings(self.portfolioTargets)
         self.portfolioTargets = []
-                
