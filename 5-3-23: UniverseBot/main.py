@@ -43,3 +43,4 @@ class CalculatingTanFrog(QCAlgorithm):
                 return 
         self.SetHoldings(self.portfolioTargets)
         self.portfolioTargets = []
+        
